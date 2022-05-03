@@ -1,3 +1,5 @@
+// u19116498 Maduna Thabo
+// u19027372 Simphiwe Ndlovu
 import java.util.Properties;
 import javax.naming.AuthenticationException;
 import javax.naming.Context;
@@ -6,9 +8,13 @@ import javax.naming.directory.InitialDirContext;
 import javax.naming.directory.SearchControls;
 import javax.naming.directory.SearchResult;
 import javax.naming.directory.DirContext;
+import javax.naming.directory.Attribute;
 import javax.naming.directory.Attributes;
+import javax.naming.directory.BasicAttribute;
+import javax.naming.directory.BasicAttributes;
 import javax.naming.NamingException;
 import java.util.Scanner;
+
 
 
 
@@ -73,6 +79,28 @@ public class contacts{
 
         
     }
+
+    public void addContact(String name,String surname, String contactNum) {
+		Attributes attributes = new BasicAttributes();
+		Attribute attribute = new BasicAttribute("objectClass");
+		attribute.add("inetOrgPerson");
+
+		attributes.put(attribute);
+		// user details
+        attributes.put("cn", name);
+		attributes.put("sn", surname);
+		attributes.put("mobile", contactNum);
+        
+		try {
+			connection.createSubcontext("cn="+name+",ou=Friends,dc=contacts,dc=local", attributes);
+			System.out.println("success");
+		} catch (NamingException e) {
+			// TODO Auto-generated catch block
+			System.out.println("Contact already exists");
+		}
+
+	}
+
     public void getAllContacts() throws NamingException{
         String searchFilter = "(objectClass=inetOrgPerson)";
         String[] reqAtt = {"cn","sn","mobile"};
@@ -94,15 +122,16 @@ public class contacts{
         }
     }
     
-    public static void main(String[] args) throws NamingException
-    {
+    public static void main(String[] args) throws NamingException{   
         contacts cl=new contacts();
         cl.newConnection();
         Scanner sc = new Scanner(System.in);
         System.out.println("Full Contact List View");
         cl.getAllContacts();
+        // cl.addContact("Neo", "Seefane", "07612565567");
+        cl.getAllContacts();
         while(true){
-            System.out.println("To exit type \"Exit\".\t To view all contacts type \"All\".\t To delete type \"Del\".\t To search type \"Search\".");
+            System.out.println("To exit type \"Exit\".\t To view all contacts type \"All\".\t To delete type \"Del\".\t To search type \"Search\".\t To add type \"Add\"");
             String op=new String ("");
             op = sc.next();
             System.out.println("\n");
@@ -123,25 +152,19 @@ public class contacts{
                 op = sc.next();
                 cl.getContactsByName(op);
             }
+            else if(op.matches("Add")){
+                String n,s,c;
+                System.out.println("Please enter name of the contact");
+                n = sc.next();
+                System.out.println("Please enter surname of contact");
+                s = sc.next();
+                System.out.println("Please enter the contact number of "+n);
+                c = sc.next();
+                cl.addContact(n,s,c);
+            }
             else{
                 System.out.println("Try another option");
             }
         }
-        // while(true){
-        //     System.out.println("Please enter the name of the contact you wish to search. To exit type \"Exit\"");
-        //     String name=new String ("");
-        //     name = sc.next();
-        //     System.out.println("\n");
-        //     if(name.matches("Exit")){
-        //         sc.close();
-        //         System.exit(1);
-        //     }
-        //     else if(name.matches("del")){
-        //         // cl.getUserByName(name);
-        //         cl.deleteContactName(name);
-        //         cl.getAllContacts();
-        //     }
-        // }
     }
-
 }
