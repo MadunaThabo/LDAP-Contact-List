@@ -1,5 +1,4 @@
-// u19116498 Maduna Thabo
-// u19027372 Simphiwe Ndlovu
+// by Maduna Thabo and Simphiwe Ndlovu
 import java.util.Properties;
 import javax.naming.AuthenticationException;
 import javax.naming.Context;
